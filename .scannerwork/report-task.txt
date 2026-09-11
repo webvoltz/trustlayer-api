@@ -1,6 +1,0 @@
-projectKey=prof-matrix-node
-serverUrl=http://localhost:9099
-serverVersion=10.6.0.92116
-dashboardUrl=http://localhost:9099/dashboard?id=prof-matrix-node
-ceTaskId=dee56fab-6f58-4a62-83ec-1bceb14d1041
-ceTaskUrl=http://localhost:9099/api/ce/task?id=dee56fab-6f58-4a62-83ec-1bceb14d1041
