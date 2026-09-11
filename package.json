@@ -34,7 +34,7 @@
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.5",
-    "multer": "^1.4.5-lts.1",
+    "multer": "^2.3.0",
     "pino": "^9.5.0",
     "pino-http": "^10.3.0",
     "swagger-ui-express": "^5.0.1",
@@ -44,7 +44,7 @@
   "devDependencies": {
     "@commitlint/cli": "^19.5.0",
     "@commitlint/config-conventional": "^19.5.0",
-    "@eslint/js": "^9.15.0",
+    "@eslint/js": "^10.0.1",
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
@@ -53,9 +53,9 @@
     "@types/node": "^22.10.2",
     "@types/supertest": "^6.0.2",
     "@types/swagger-ui-express": "^4.1.6",
-    "@vitest/coverage-v8": "^2.1.8",
-    "eslint": "^9.15.0",
-    "eslint-config-prettier": "^9.1.0",
+    "@vitest/coverage-v8": "^5.0.0",
+    "eslint": "^10.0.0",
+    "eslint-config-prettier": "^10.1.8",
     "globals": "^15.12.0",
     "husky": "^9.1.7",
     "lint-staged": "^15.2.10",
@@ -65,6 +65,9 @@
     "tsx": "^4.19.2",
     "typescript": "^5.6.3",
     "typescript-eslint": "^8.15.0",
-    "vitest": "^2.1.8"
+    "vitest": "^5.0.0"
+  },
+  "overrides": {
+    "qs": "^6.16.0"
   }
 }
