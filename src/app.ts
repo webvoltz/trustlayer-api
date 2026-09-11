@@ -1,8 +1,10 @@
 import cors from 'cors';
 import express, { type Express } from 'express';
 import helmet from 'helmet';
+import swaggerUi from 'swagger-ui-express';
 
 import { env } from './config/env.js';
+import { openApiDocument } from './docs/openapi.js';
 import { errorHandler } from './middleware/errorHandler.middleware.js';
 import { notFound } from './middleware/notFound.middleware.js';
 import { createApiRateLimiter } from './middleware/rateLimit.middleware.js';
@@ -26,6 +28,8 @@ export function createApp(): Express {
   if (env.STORAGE_PROVIDER === 'local') {
     app.use('/uploads', express.static(env.UPLOAD_DIR));
   }
+
+  app.use('/docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
   app.use('/health', healthRouter);
   app.use('/api/v1/auth', createAuthRouter());

@@ -6,6 +6,21 @@
   "private": true,
   "license": "MIT",
   "main": "dist/src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/webvoltz/trustlayer-api.git"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "mongodb",
+    "mongoose",
+    "jwt",
+    "openapi",
+    "security",
+    "api",
+    "webvoltz"
+  ],
   "engines": {
     "node": ">=20",
     "npm": ">=10"
