@@ -44,5 +44,16 @@ export default defineConfig(
     files: ['**/*.{cjs,js,mjs}'],
     extends: [tseslint.configs.disableTypeChecked],
   },
+  {
+    // supertest's Response#body is untyped `any`; asserting on it in tests is standard practice
+    // and doesn't warrant the production-code unsafe-any rules.
+    files: ['src/tests/**/*.test.ts'],
+    rules: {
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-enum-comparison': 'off',
+    },
+  },
   prettier,
 );
