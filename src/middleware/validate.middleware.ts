@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
-import type { ZodType } from 'zod';
+import { treeifyError, type ZodType } from 'zod';
 
 import { ApiError } from '../utils/apiError.js';
 
@@ -8,7 +8,9 @@ export function validateBody<T>(schema: ZodType<T>) {
     const result = schema.safeParse(req.body);
 
     if (!result.success) {
-      next(ApiError.unprocessable('Validation failed', result.error.flatten().fieldErrors));
+      const tree = treeifyError(result.error);
+      const details = 'properties' in tree ? tree.properties : tree.errors;
+      next(ApiError.unprocessable('Validation failed', details));
       return;
     }
 

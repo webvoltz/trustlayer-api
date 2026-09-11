@@ -44,7 +44,7 @@ const envSchema = z
     for (const key of requiredKeys) {
       if (!value[key]) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           message: `${key} is required when STORAGE_PROVIDER=s3`,
           path: [key],
         });

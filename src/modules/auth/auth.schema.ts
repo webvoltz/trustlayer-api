@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+// .pipe(z.email()) validates the format only after trim/lowercase have run, so
+// " Foo@Example.com " normalizes and passes instead of failing on its original casing/whitespace.
+const emailSchema = z.string().trim().toLowerCase().pipe(z.email());
+
 const passwordSchema = z
   .string()
   .min(8, 'Password must be at least 8 characters')
@@ -8,19 +12,19 @@ const passwordSchema = z
   .regex(/[0-9]/, 'Password must contain at least one number');
 
 export const registerSchema = z.object({
-  email: z.string().trim().toLowerCase().email(),
+  email: emailSchema,
   password: passwordSchema,
 });
 export type RegisterInput = z.infer<typeof registerSchema>;
 
 export const loginSchema = z.object({
-  email: z.string().trim().toLowerCase().email(),
+  email: emailSchema,
   password: z.string().min(1, 'Password is required'),
 });
 export type LoginInput = z.infer<typeof loginSchema>;
 
 export const forgotPasswordSchema = z.object({
-  email: z.string().trim().toLowerCase().email(),
+  email: emailSchema,
 });
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
 
