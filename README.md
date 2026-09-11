@@ -1,11 +1,14 @@
 # TrustLayer API
 
+[![CI](https://github.com/webvoltz/trustlayer-api/actions/workflows/ci.yml/badge.svg)](https://github.com/webvoltz/trustlayer-api/actions/workflows/ci.yml)
+
 Secure Express API with JWT auth, validation, rate limiting, uploads, and OpenAPI docs.
 
 TrustLayer API is a reference backend that demonstrates how Webvoltz builds secure, production-shaped
 Node.js services: typed request validation, JWT authentication, brute-force-resistant rate limiting, a
 pluggable file-upload adapter, structured logs with request correlation IDs, and OpenAPI documentation —
-all backed by an automated test suite.
+all backed by an automated test suite. Built on Express 5, Mongoose 9, and Zod 4, kept current with
+zero open `npm audit` advisories.
 
 ## Architecture
 
@@ -50,8 +53,8 @@ consistent, non-leaky JSON shape.
 - **Rate limiting** — a general API limiter plus a stricter, failure-only limiter on the auth
   endpoints (`/register`, `/login`, `/forgot-password`, `/reset-password`) to blunt credential
   stuffing and brute-force attempts.
-- **Password handling** — bcrypt hashing (12 salt rounds), and reset tokens that are single-use,
-  time-limited, and stored only as a SHA-256 hash — never in plaintext.
+- **Password handling** — bcrypt hashing via `bcryptjs` (12 salt rounds), and reset tokens that are
+  single-use, time-limited, and stored only as a SHA-256 hash — never in plaintext.
 - **Account-enumeration resistance** — `/forgot-password` responds identically whether or not the
   email is registered.
 - **Upload safety** — a mimetype allowlist, a configurable size ceiling, and generated (never
@@ -104,6 +107,7 @@ liveness check.
 | `npm run typecheck`               | `tsc --noEmit`                                       |
 | `npm run quality`                 | format:check + lint + typecheck                      |
 | `npm test`                        | Vitest + Supertest with coverage thresholds enforced |
+| `npm run test:watch`              | Vitest in watch mode                                 |
 | `npm run security:audit`          | `npm audit --audit-level=high`                       |
 
 ## API endpoints
@@ -132,6 +136,14 @@ register → login → protected-route → forgot/reset-password lifecycle, auth
 and the upload adapter (a local-disk unit test, an S3 misconfiguration guard, and the authenticated
 upload route including its rejection paths).
 
+## Continuous integration
+
+Every push and pull request runs four independent GitHub Actions jobs
+([.github/workflows/ci.yml](.github/workflows/ci.yml)): `lint` (format check + ESLint + typecheck),
+`test` (the full Vitest suite), and `audit` (`npm audit --audit-level=high`) run in parallel; `build`
+runs only after `lint` and `test` both succeed. A concurrency group cancels a run that's been
+superseded by a newer push to the same branch or PR.
+
 ## Storage adapters
 
 Uploads go through a `StorageAdapter` interface (`src/modules/uploads/adapters`) so the transport
@@ -151,9 +163,19 @@ for a public reference project:
   the `gitleaks` binary on `PATH`, which would block contributors who haven't installed it. GitHub's
   own secret scanning covers this repo instead.
 - **Dependency versions use semver ranges, not exact pins**, so the project stays installable
-  without manual bumps as the ecosystem moves.
-- **`engines.node` is `>=20`** rather than an exact major, for wider compatibility as a public
-  sample.
+  without manual bumps as the ecosystem moves. All dependencies are otherwise kept current: `npm
+outdated` is clean apart from the TypeScript exception below.
+- **`engines.node` is `>=20.19`** (Mongoose 9's floor) rather than an exact major, for wider
+  compatibility as a public sample.
+- **TypeScript is intentionally held on the 5.x line.** TypeScript 7 is a from-scratch native (Go)
+  compiler, not an incremental release, and `typescript-eslint` (the linter behind this project's
+  type-aware rules — `no-floating-promises`, `no-unsafe-*`, exhaustiveness checks, etc.) hard-fails
+  against it; its latest release only supports TypeScript `<6.1.0`. A documented, verified
+  workaround exists (aliasing a `typescript@6.0` compatibility shim for the linter while running the
+  native v7 compiler separately for builds), but it depends on a package Microsoft itself calls
+  temporary and introduces a non-obvious two-compiler setup — not a trade worth making for a
+  reference repo whose whole point is being straightforward to read. Revisit once
+  `typescript-eslint` supports TypeScript 6/7 natively.
 
 ## License
 
