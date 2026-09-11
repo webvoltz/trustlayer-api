@@ -1,12 +1,10 @@
 # TrustLayer API
 
-[![CI](https://github.com/webvoltz/trustlayer-api/actions/workflows/ci.yml/badge.svg)](https://github.com/webvoltz/trustlayer-api/actions/workflows/ci.yml)
-
 Secure Express API with JWT auth, validation, rate limiting, uploads, and OpenAPI docs.
 
 TrustLayer API is a reference backend that demonstrates how Webvoltz builds secure, production-shaped
 Node.js services: typed request validation, JWT authentication, brute-force-resistant rate limiting, a
-pluggable file-upload adapter, structured logs with request correlation IDs, and OpenAPI documentation —
+pluggable file-upload adapter, structured logs with request correlation IDs, and OpenAPI documentation -
 all backed by an automated test suite. Built on Express 5, Mongoose 9, and Zod 4, kept current with
 zero open `npm audit` advisories.
 
@@ -39,38 +37,38 @@ flowchart LR
 
 Requests flow through a fixed middleware pipeline (security headers → structured logging → rate
 limiting → routing) before reaching a module. Each module keeps its `routes` → `controller` →
-`service` layers separate, so validation, auth, and persistence concerns never mix. Every error —
-expected (`ApiError`) or not — passes through one central handler that logs it and returns a
+`service` layers separate, so validation, auth, and persistence concerns never mix. Every error -
+expected (`ApiError`) or not - passes through one central handler that logs it and returns a
 consistent, non-leaky JSON shape.
 
 ## Security features
 
-- **JWT authentication** — short-lived, signed access tokens (`requireAuth` middleware), verified
+- **JWT authentication** - short-lived, signed access tokens (`requireAuth` middleware), verified
   with an explicit issuer check.
-- **Request validation** — every mutating endpoint validates its body against a
+- **Request validation** - every mutating endpoint validates its body against a
   [zod](https://zod.dev) schema before touching a controller; failures return `422` with field-level
   detail, never a stack trace.
-- **Rate limiting** — a general API limiter plus a stricter, failure-only limiter on the auth
+- **Rate limiting** - a general API limiter plus a stricter, failure-only limiter on the auth
   endpoints (`/register`, `/login`, `/forgot-password`, `/reset-password`) to blunt credential
   stuffing and brute-force attempts.
-- **Password handling** — bcrypt hashing via `bcryptjs` (12 salt rounds), and reset tokens that are
-  single-use, time-limited, and stored only as a SHA-256 hash — never in plaintext.
-- **Account-enumeration resistance** — `/forgot-password` responds identically whether or not the
+- **Password handling** - bcrypt hashing via `bcryptjs` (12 salt rounds), and reset tokens that are
+  single-use, time-limited, and stored only as a SHA-256 hash - never in plaintext.
+- **Account-enumeration resistance** - `/forgot-password` responds identically whether or not the
   email is registered.
-- **Upload safety** — a mimetype allowlist, a configurable size ceiling, and generated (never
+- **Upload safety** - a mimetype allowlist, a configurable size ceiling, and generated (never
   user-supplied) storage keys, so an uploaded filename can never influence a disk or object-store
   path.
-- **Secure defaults** — `helmet` security headers, a locked-down CORS origin, no stack traces or
+- **Secure defaults** - `helmet` security headers, a locked-down CORS origin, no stack traces or
   internal error detail ever reaches a client response, and secrets (JWT, passwords, reset tokens)
   are redacted from logs.
-- **Structured logging** — every request gets a correlation ID (`X-Request-Id`), propagated through
+- **Structured logging** - every request gets a correlation ID (`X-Request-Id`), propagated through
   `pino` logs so a single request can be traced end to end.
 
 ## Project structure
 
 ```text
 src/
-  app.ts                    Express app assembly (no listen — used directly in tests)
+  app.ts                    Express app assembly (no listen - used directly in tests)
   index.ts                  Process entry point: connect DB, start the HTTP server
   config/                   Env validation (zod), logger, MongoDB connection
   middleware/                Auth guard, validation, rate limiters, request logger, error handler
@@ -114,11 +112,11 @@ liveness check.
 
 | Method | Path                           | Auth | Notes                                    |
 | ------ | ------------------------------ | ---- | ---------------------------------------- |
-| GET    | `/health`                      | —    | Liveness check                           |
-| POST   | `/api/v1/auth/register`        | —    | Create an account                        |
-| POST   | `/api/v1/auth/login`           | —    | Rate-limited                             |
-| POST   | `/api/v1/auth/forgot-password` | —    | Rate-limited; enumeration-safe           |
-| POST   | `/api/v1/auth/reset-password`  | —    | Rate-limited                             |
+| GET    | `/health`                      | -    | Liveness check                           |
+| POST   | `/api/v1/auth/register`        | -    | Create an account                        |
+| POST   | `/api/v1/auth/login`           | -    | Rate-limited                             |
+| POST   | `/api/v1/auth/forgot-password` | -    | Rate-limited; enumeration-safe           |
+| POST   | `/api/v1/auth/reset-password`  | -    | Rate-limited                             |
 | GET    | `/api/v1/users/me`             | JWT  | Caller profile                           |
 | POST   | `/api/v1/uploads`              | JWT  | `multipart/form-data`, field name `file` |
 
@@ -149,8 +147,8 @@ superseded by a newer push to the same branch or PR.
 Uploads go through a `StorageAdapter` interface (`src/modules/uploads/adapters`) so the transport
 is swappable via `STORAGE_PROVIDER`:
 
-- `local` (default) — writes to `UPLOAD_DIR` on disk; useful for development and the test suite.
-- `s3` — uploads to an S3 bucket via the modular AWS SDK v3 client. Requires `S3_BUCKET`,
+- `local` (default) - writes to `UPLOAD_DIR` on disk; useful for development and the test suite.
+- `s3` - uploads to an S3 bucket via the modular AWS SDK v3 client. Requires `S3_BUCKET`,
   `S3_REGION`, `S3_ACCESS_KEY_ID`, and `S3_SECRET_ACCESS_KEY`.
 
 ## Deviations from the Webvoltz engineering standard
@@ -169,11 +167,11 @@ outdated` is clean apart from the TypeScript exception below.
   compatibility as a public sample.
 - **TypeScript is intentionally held on the 5.x line.** TypeScript 7 is a from-scratch native (Go)
   compiler, not an incremental release, and `typescript-eslint` (the linter behind this project's
-  type-aware rules — `no-floating-promises`, `no-unsafe-*`, exhaustiveness checks, etc.) hard-fails
+  type-aware rules - `no-floating-promises`, `no-unsafe-*`, exhaustiveness checks, etc.) hard-fails
   against it; its latest release only supports TypeScript `<6.1.0`. A documented, verified
   workaround exists (aliasing a `typescript@6.0` compatibility shim for the linter while running the
   native v7 compiler separately for builds), but it depends on a package Microsoft itself calls
-  temporary and introduces a non-obvious two-compiler setup — not a trade worth making for a
+  temporary and introduces a non-obvious two-compiler setup - not a trade worth making for a
   reference repo whose whole point is being straightforward to read. Revisit once
   `typescript-eslint` supports TypeScript 6/7 natively.
 
