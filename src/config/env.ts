@@ -15,7 +15,7 @@ const envSchema = z
         'MONGODB_URI must be a valid MongoDB connection string',
       ),
     JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters'),
-    JWT_EXPIRES_IN: z.string().default('1h'),
+    JWT_ACCESS_TOKEN_TTL_SECONDS: z.coerce.number().int().positive().default(3600),
     CORS_ORIGIN: z.string().default('*'),
     RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(900_000),
     RATE_LIMIT_MAX: z.coerce.number().int().positive().default(100),
