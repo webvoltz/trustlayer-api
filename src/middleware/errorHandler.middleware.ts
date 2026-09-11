@@ -1,4 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
+import { MulterError } from 'multer';
 
 import { ApiError } from '../utils/apiError.js';
 
@@ -11,6 +12,16 @@ export function errorHandler(err: unknown, req: Request, res: Response, _next: N
       status: 'error',
       message: err.message,
       details: err.details,
+      requestId,
+    });
+    return;
+  }
+
+  if (err instanceof MulterError) {
+    req.log.warn({ err }, err.message);
+    res.status(400).json({
+      status: 'error',
+      message: err.message,
       requestId,
     });
     return;

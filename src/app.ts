@@ -9,6 +9,7 @@ import { apiRateLimiter } from './middleware/rateLimit.middleware.js';
 import { requestLogger } from './middleware/requestLogger.middleware.js';
 import { authRouter } from './modules/auth/auth.routes.js';
 import { healthRouter } from './modules/health/health.routes.js';
+import { uploadRouter } from './modules/uploads/upload.routes.js';
 import { userRouter } from './modules/users/user.routes.js';
 
 export function createApp(): Express {
@@ -22,9 +23,14 @@ export function createApp(): Express {
   app.use(express.urlencoded({ extended: false, limit: '1mb' }));
   app.use(apiRateLimiter);
 
+  if (env.STORAGE_PROVIDER === 'local') {
+    app.use('/uploads', express.static(env.UPLOAD_DIR));
+  }
+
   app.use('/health', healthRouter);
   app.use('/api/v1/auth', authRouter);
   app.use('/api/v1/users', userRouter);
+  app.use('/api/v1/uploads', uploadRouter);
 
   app.use(notFound);
   app.use(errorHandler);
