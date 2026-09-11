@@ -10,6 +10,7 @@
     "declaration": true,
     "resolveJsonModule": true,
     "verbatimModuleSyntax": true,
+    "esModuleInterop": true,
     "types": ["node"],
     "allowJs": false,
     "allowUnreachableCode": false,
