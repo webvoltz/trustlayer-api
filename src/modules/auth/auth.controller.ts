@@ -1,5 +1,5 @@
 import { asyncHandler } from '../../utils/asyncHandler.js';
-import type { TypedRequestBody } from '../../utils/httpTypes.js';
+import type { TypedRequestBody } from '../../types/httpTypes.js';
 import * as authService from './auth.service.js';
 import type {
   ForgotPasswordInput,
